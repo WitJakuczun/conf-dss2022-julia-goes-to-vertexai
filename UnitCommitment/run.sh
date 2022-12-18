@@ -1,0 +1,1 @@
+julia --project=. UnitCommitment/main.jl --path-loads="data/Loads.csv" --path-units="data/Units.csv" --path-units-maintenance="data/UnitMaintenances.csv" --path-exchanges="data/Exchanges.csv" --path-weights="/data/Weights.csv" --demand-aug-ratio=1.0 --metrics-file="metrics.json" --report-file-jmd="report.jmd" --report-file-out="report.html"

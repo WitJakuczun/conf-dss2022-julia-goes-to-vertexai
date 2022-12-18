@@ -1,0 +1,28 @@
+name: Julia component
+description: Runs Julia code
+
+inputs:
+- {name: demand-aug-ratio, type: Float}
+- {name: loads, type: Dataset}
+- {name: units, type: Dataset}
+- {name: units-maintenance, type: Dataset}
+- {name: exchanges, type: Dataset}
+- {name: weights, type: Dataset}
+
+outputs:
+- {name: result, type: Dataset}
+- {name: metrics, type: Metrics}
+- {name: report, type: HTML}
+
+implementation:
+    container:
+        image: "us-central1-docker.pkg.dev/dss2022-julia-and-vertexai/dss2022-julia-and-vertexai/juliacomponent:latest"
+        command: [
+            "julia",
+            "--project=UnitCommitment",
+            "UnitCommitment/main.jl",
+            "--demand-aug-ratio",
+            {inputValue: demand-aug-ratio},
+            "--executor-input",
+            {executorInput: null}
+        ]

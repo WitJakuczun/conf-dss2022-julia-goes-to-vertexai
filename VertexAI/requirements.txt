@@ -1,0 +1,6 @@
+wheel
+ipykernel==6.15.3
+kfp
+google-cloud-storage
+google-cloud-aiplatform
+pandas

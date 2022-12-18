@@ -1,0 +1,15 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      docker pull us-central1-docker.pkg.dev/dss2022-julia-and-vertexai/dss2022-julia-and-vertexai/juliacomponent:latest || exit 0
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+    '-t', 'us-central1-docker.pkg.dev/dss2022-julia-and-vertexai/dss2022-julia-and-vertexai/juliacomponent:latest',
+    '--cache-from', 'us-central1-docker.pkg.dev/dss2022-julia-and-vertexai/dss2022-julia-and-vertexai/juliacomponent:latest',
+    '.' ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'us-central1-docker.pkg.dev/dss2022-julia-and-vertexai/dss2022-julia-and-vertexai/juliacomponent:latest']
+images: ['us-central1-docker.pkg.dev/dss2022-julia-and-vertexai/dss2022-julia-and-vertexai/juliacomponent:latest']

@@ -1,0 +1,72 @@
+---
+title: Unit commitment scenario results
+author: Wit Jakuczun
+date: `j import Dates; Dates.Date(Dates.now())`
+---
+
+# Scenario parameters
+
+Table of optimization parameters used for the Scenario
+
+| Parameter name | Parameter value |
+|----------------|-----------------|
+| Demand augmentation ratio | `j WEAVE_ARGS.demand_aug_ratio` |
+
+```julia; echo=false
+using DataFrames
+metrics = WEAVE_ARGS.metrics
+metrics_df = stack(DataFrame(metrics))
+```
+
+# Scenario results
+
+## Summary of costs
+
+| Metric | Value |
+|--------|-------|
+| Total cost | `j metrics["objective_cost"]` |
+| Fixed costs | `j metrics["fixed_cost"]` |
+| Variable costs | `j metrics["variable_cost"]` |
+| Startup costs | `j metrics["startup_cost"]` |
+| CO2 costs | `j metrics["co2_cost"]` |
+
+```julia; echo=false
+using Plots
+
+metrics_no_total_df =subset(metrics_df , :variable => v -> v .!= "objective_cost")
+bar(metrics_no_total_df[!, :variable], metrics_no_total_df[!, :value])
+```
+
+## Production vs demand
+
+```julia; echo=false
+solution = WEAVE_ARGS.solution
+
+plot(solution.problem.periods, [solution.production_total[p] + solution.exchanges_total[p] for p in solution.problem.periods], label="production + exchanges", legend=false)
+plot!(solution.problem.periods, [solution.production_total[p] for p in solution.problem.periods], label="production" )
+bar!(solution.problem.periods, [solution.exchanges_total[p] for p in solution.problem.periods], label="exchanges" )
+plot!(solution.problem.periods, [solution.problem.demand[p] for p in solution.problem.periods], label="demand")
+yticks!(0:50:1500)
+```
+
+## Units in use
+
+```julia; echo=false
+
+in_use = transpose(Matrix(DataFrames.DataFrame(Dict([
+        (kv[1], [kv[2][p] for p in solution.problem.periods]) for kv in solution.unit_in_use
+]))))
+
+heatmap(solution.problem.periods, solution.problem.units, in_use)
+```
+
+## Turn on/off
+
+```julia; echo=false
+
+turn_on = transpose(Matrix(DataFrames.DataFrame(Dict([
+        (kv[1], [kv[2][p] for p in solution.problem.periods]) for kv in solution.unit_turn_on
+]))))
+
+heatmap(solution.problem.periods, solution.problem.units, turn_on)
+```
